@@ -10,6 +10,7 @@ export default function Index() {
       }}
     >
       <Text>Tasko Tracker</Text>
+      <Text>Tasko Tracker</Text>
     </View>
   );
 }
