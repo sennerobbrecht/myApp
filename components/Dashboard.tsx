@@ -2,10 +2,10 @@ import { BlurView } from "expo-blur";
 import React, { useEffect } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
+    Easing,
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -52,7 +52,7 @@ export default function Dashboard({ visible, children }: DashboardProps) {
             style={[
               styles.contentContainer,
               {
-                paddingBottom: insets.bottom + 20,
+                paddingBottom: insets.bottom,
                 backgroundColor: "rgba(0,0,0,0.5)",
               },
             ]}

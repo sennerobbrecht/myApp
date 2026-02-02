@@ -213,7 +213,10 @@ export default function Routines() {
         onChangeWeek={changeWeek}
       />
 
-      <NestableScrollContainer contentContainerStyle={{ paddingBottom: 100 }}>
+      <NestableScrollContainer
+        contentContainerStyle={{ paddingBottom: 20 }}
+        showsVerticalScrollIndicator={false}
+      >
         {currentSections.map((section) => (
           <RoutineSection
             key={section.id}
