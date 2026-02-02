@@ -1,81 +1,102 @@
+import { BlurView } from "expo-blur";
 import React, { useEffect } from "react";
-import {
-    LayoutAnimation,
-    Platform,
-    StyleSheet,
-    Text,
-    UIManager,
-    View,
-} from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-// Enable animations on Android
-if (
-  Platform.OS === "android" &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
-
+// It accepts 'children' now!
 interface DashboardProps {
   visible: boolean;
-  onClose: () => void;
+  children?: React.ReactNode;
 }
 
-export default function Dashboard({ visible, onClose }: DashboardProps) {
-  // This triggers the "Slide" animation whenever 'visible' changes
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+export default function Dashboard({ visible, children }: DashboardProps) {
+  const insets = useSafeAreaInsets();
+  const TOP_OFFSET = insets.top + 5;
+  const translateY = useSharedValue(-SCREEN_HEIGHT);
+
   useEffect(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    if (visible) {
+      translateY.value = withTiming(0, {
+        duration: 400,
+        easing: Easing.out(Easing.quad),
+      });
+    } else {
+      translateY.value = withTiming(-SCREEN_HEIGHT, {
+        duration: 300,
+        easing: Easing.in(Easing.quad),
+      });
+    }
   }, [visible]);
 
-  const insets = useSafeAreaInsets();
-  // If not visible, we return null so it renders nothing (and collapses)
-  if (!visible) {
-    return null;
-  }
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: translateY.value }],
+    };
+  });
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-      {/* The Dashboard Content */}
-      <View style={styles.window}>
-        <Text style={styles.title}>Dashboard</Text>
-        <Text style={styles.text}>I am sliding out from the button!</Text>
-      </View>
+    // Wrapper creates a "Mask" starting at TOP_OFFSET
+    // overflow: hidden ensures the sheet is invisible until it slides "into" this frame
+    <View style={[styles.maskContainer, { top: TOP_OFFSET }]}>
+      <Animated.View style={[styles.sheet, animatedStyle]}>
+        <BlurView intensity={80} tint="dark" style={styles.blurContainer}>
+          <View
+            style={[
+              styles.contentContainer,
+              {
+                paddingBottom: insets.bottom + 20,
+                backgroundColor: "rgba(0,0,0,0.5)",
+              },
+            ]}
+          >
+            {children}
+          </View>
+        </BlurView>
+      </Animated.View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // This allows the view to sit nicely in the layout
-    flex: 1,
-    alignItems: "center",
+  maskContainer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    // This allows the sheet to "emerge" from the top edge of this container
+    overflow: "hidden",
+    zIndex: -1,
+  },
+  sheet: {
     width: "100%",
-    marginTop: 10, // Small gap between button and dashboard
-  },
-  window: {
-    flex: 1,
-    width: "90%",
-    backgroundColor: "white",
-    borderRadius: 10,
-    padding: 20,
-    // Shadows for depth
+    height: "100%",
+    backgroundColor: "transparent",
+    borderRadius: 24,
+    // Border radius needs one more overflow clip to work on the BlurView
+    overflow: "hidden",
+
+    // Shadow only shows if we have space, but masking might cut top shadow.
+    // Usually fine for this effect.
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    borderWidth: 1,
-    borderColor: "#eee",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-    textAlign: "center",
+  blurContainer: {
+    flex: 1,
+    width: "100%",
   },
-  text: {
-    textAlign: "center",
-    marginBottom: 20,
+  contentContainer: {
+    flex: 1,
+    padding: 20,
   },
 });

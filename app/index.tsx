@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import Dashboard from "../components/Dashboard";
 import OverlayButton from "../components/OverlayButton";
 
@@ -7,7 +7,7 @@ export default function Index() {
   const [isDashboardVisible, setDashboardVisible] = useState(false);
 
   const toggleDashboard = () => {
-    setDashboardVisible(!isDashboardVisible); // Shortcut: sets it to the opposite of what it is
+    setDashboardVisible(!isDashboardVisible);
   };
 
   return (
@@ -15,10 +15,13 @@ export default function Index() {
       <OverlayButton
         title="Dashboard"
         onPress={toggleDashboard}
-        isOpen={isDashboardVisible} // <--- Pass the state here!
+        isOpen={isDashboardVisible}
       />
 
-      <Dashboard visible={isDashboardVisible} onClose={toggleDashboard} />
+      {/* FIXED: Removed 'onClose' as it is not a valid prop for Dashboard */}
+      <Dashboard visible={isDashboardVisible}>
+        <Text>Dashboard</Text>
+      </Dashboard>
     </View>
   );
 }
