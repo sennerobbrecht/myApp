@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import Dashboard from "../components/Dashboard";
+import Nav, { TabOption } from "../components/Nav"; // 1. Import TabOption
 import OverlayButton from "../components/OverlayButton";
 
 export default function Index() {
   const [isDashboardVisible, setDashboardVisible] = useState(false);
+  // 2. Add state to track the active tab
+  const [activeTab, setActiveTab] = useState<TabOption>("Routines");
 
   const toggleDashboard = () => {
     setDashboardVisible(!isDashboardVisible);
@@ -18,9 +21,9 @@ export default function Index() {
         isOpen={isDashboardVisible}
       />
 
-      {/* FIXED: Removed 'onClose' as it is not a valid prop for Dashboard */}
       <Dashboard visible={isDashboardVisible}>
-        <Text>Dashboard</Text>
+        {/* 3. Pass the required props to Nav */}
+        <Nav activeTab={activeTab} onTabSelect={setActiveTab} />
       </Dashboard>
     </View>
   );
