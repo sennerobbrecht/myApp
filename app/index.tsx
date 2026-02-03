@@ -1,43 +1,62 @@
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { View, StyleSheet } from "react-native";
+
 import Dashboard from "../components/Dashboard";
 import Nav, { TabOption } from "../components/Nav";
 import OverlayButton from "../components/OverlayButton";
-import Routines from "../components/Routines"; // Import the new component
+import Routines from "../components/Routines";
+import Monster3D from "../components/Monster3D";
 
 export default function Index() {
   const [isDashboardVisible, setDashboardVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<TabOption>("Routines");
 
-  const toggleDashboard = () => {
-    setDashboardVisible(!isDashboardVisible);
-  };
-
   return (
-    <View style={{ flex: 1 }}>
-      <OverlayButton
-        title="Dashboard"
-        onPress={toggleDashboard}
-        isOpen={isDashboardVisible}
-      />
+    <View style={styles.root}>
 
+      {/* 🧌 3D MONSTER = BASISLAAG (HOMESCREEN) */}
+      <Monster3D />
+
+      {/* 🔘 DASHBOARD KNOP (OVERLAY) */}
+      <View style={styles.overlay}>
+        <OverlayButton
+          title="Dashboard"
+          onPress={() => setDashboardVisible(!isDashboardVisible)}
+          isOpen={isDashboardVisible}
+        />
+      </View>
+
+      {/* 📊 DASHBOARD OVERLAY */}
       <Dashboard visible={isDashboardVisible}>
-        {/* Nav is now the header */}
-        <Nav activeTab={activeTab} onTabSelect={setActiveTab} />
+        <Nav
+          activeTab={activeTab}
+          onTabSelect={setActiveTab}
+        />
 
-        {/* Content Area */}
-        <View style={styles.content}>
+        <View style={styles.dashboardContent}>
           {activeTab === "Routines" && <Routines />}
-          {/* Add placeholders for other tabs if needed */}
         </View>
       </Dashboard>
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
+  root: {
     flex: 1,
-    marginTop: 10,
   },
-});
+
+  // UI die boven het monster ligt
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10, // ✅ Android-proof
+  },
+
+  dashboardContent: {
+    flex: 1,
+  },
+}); 
