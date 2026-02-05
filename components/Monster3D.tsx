@@ -1,5 +1,6 @@
 import {
   ContactShadows,
+  Environment,
   OrbitControls,
   useGLTF,
 } from "@react-three/drei/native";
@@ -43,6 +44,40 @@ console.log = (...args) => {
 function Model({ uri }: { uri: string }) {
   // useGLTF will auto-suspend while loading
   const { scene } = useGLTF(uri);
+
+  useEffect(() => {
+    if (scene) {
+      console.log("🦾 SCENE LOADED. Traversing...");
+      scene.traverse((child: any) => {
+        if (child.isMesh) {
+          console.log(`📦 Found Mesh: ${child.name}`);
+          console.log(`   🎨 Material: ${child.material?.name}`);
+          console.log(
+            `   🖼️ Map (Texture):`,
+            child.material?.map ? "✅ YES" : "❌ NO",
+          );
+
+          // 🛠️ FIX: Use Emissive channel to mimic "Unlit" / "Baked" appearance
+          // This makes the texture glow with its own color, ignoring shadows/lights.
+          if (child.material) {
+            child.material.roughness = 1.0;
+            child.material.metalness = 0.0;
+
+            // If we have a texture map, use it as the emissive map too
+            // This makes it self-illuminated (shadeless)
+            if (child.material.map) {
+              child.material.emissiveMap = child.material.map;
+              child.material.emissive.set("white");
+              child.material.emissiveIntensity = 1;
+            }
+
+            child.material.needsUpdate = true;
+          }
+        }
+      });
+    }
+  }, [scene]);
+
   return <primitive object={scene} scale={3.5} position={[0, -1.5, 0]} />;
 }
 
@@ -84,18 +119,14 @@ export default function Monster3D() {
   return (
     <View style={styles.container}>
       <Canvas>
-        {/* Stronger general lighting */}
         <ambientLight intensity={1.5} />
 
-        {/* Hemisphere light mimics sky/ground lighting */}
         <hemisphereLight intensity={1} groundColor="#444" />
 
-        {/* Main light from the top-right */}
         <directionalLight position={[5, 5, 5]} intensity={2} />
-        {/* Soft fill light from the other side */}
+
         <directionalLight position={[-5, 5, 5]} intensity={1} />
 
-        {/* Soft shadow to ground the model */}
         <ContactShadows
           opacity={0.6}
           scale={10}
@@ -104,7 +135,9 @@ export default function Monster3D() {
           color="#000000"
         />
 
+        {/* Wrap BOTH Environment and Model in Suspense */}
         <Suspense fallback={null}>
+          <Environment preset="city" />
           <Model uri={modelUri} />
         </Suspense>
 
