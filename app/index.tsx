@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { View, StyleSheet } from "react-native";
-
+import { StyleSheet, View } from "react-native";
 import Dashboard from "../components/Dashboard";
+import Monster3D from "../components/Monster3D";
 import Nav, { TabOption } from "../components/Nav";
 import OverlayButton from "../components/OverlayButton";
 import Routines from "../components/Routines";
-import Monster3D from "../components/Monster3D";
 
 export default function Index() {
   const [isDashboardVisible, setDashboardVisible] = useState(false);
@@ -13,9 +12,7 @@ export default function Index() {
 
   return (
     <View style={styles.root}>
-
       {/* 🧌 3D MONSTER = BASISLAAG (HOMESCREEN) */}
-      <Monster3D />
 
       {/* 🔘 DASHBOARD KNOP (OVERLAY) */}
       <View style={styles.overlay}>
@@ -26,18 +23,16 @@ export default function Index() {
         />
       </View>
 
+      <Monster3D />
+
       {/* 📊 DASHBOARD OVERLAY */}
       <Dashboard visible={isDashboardVisible}>
-        <Nav
-          activeTab={activeTab}
-          onTabSelect={setActiveTab}
-        />
+        <Nav activeTab={activeTab} onTabSelect={setActiveTab} />
 
         <View style={styles.dashboardContent}>
           {activeTab === "Routines" && <Routines />}
         </View>
       </Dashboard>
-
     </View>
   );
 }
@@ -59,4 +54,4 @@ const styles = StyleSheet.create({
   dashboardContent: {
     flex: 1,
   },
-}); 
+});

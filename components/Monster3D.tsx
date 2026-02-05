@@ -1,104 +1,73 @@
-import { View, StyleSheet } from "react-native";
-import { WebView } from "react-native-webview";
+import { useGLTF } from "@react-three/drei/native";
+import { Canvas } from "@react-three/fiber/native";
+import { Asset } from "expo-asset";
+import { Suspense, useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import TaskoModel from "../assets/3d-models/Tasko.glb";
+
+// 1. The Model Component (Inside Canvas)
+function Model({ uri }: { uri: string }) {
+  // useGLTF will auto-suspend while loading
+  const { scene } = useGLTF(uri);
+  return <primitive object={scene} scale={2} position={[0, -1, 0]} />;
+}
 
 export default function Monster3D() {
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-          html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: transparent;
-          }
-          canvas {
-            width: 100%;
-            height: 100%;
-            touch-action: none;
-          }
-        </style>
-      </head>
-      <body>
-        <canvas id="renderCanvas"></canvas>
+  const [modelUri, setModelUri] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-        <script src="https://cdn.babylonjs.com/babylon.js"></script>
-        <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+  useEffect(() => {
+    // 2. Resolve the local asset to a URI
+    const loadResource = async () => {
+      try {
+        const asset = Asset.fromModule(TaskoModel);
+        await asset.downloadAsync();
+        setModelUri(asset.localUri || asset.uri);
+      } catch (err) {
+        setError(String(err));
+      }
+    };
+    loadResource();
+  }, []);
 
-        <script>
-          const canvas = document.getElementById("renderCanvas");
-          const engine = new BABYLON.Engine(canvas, true, {
-            preserveDrawingBuffer: true,
-            stencil: true,
-          });
+  if (error) {
+    return (
+      <View style={styles.center}>
+        <Text style={{ color: "red" }}>Error: {error}</Text>
+      </View>
+    );
+  }
 
-          const createScene = () => {
-            const scene = new BABYLON.Scene(engine);
-            scene.clearColor = new BABYLON.Color4(0, 0, 0, 0); // transparant
-
-            const camera = new BABYLON.ArcRotateCamera(
-              "camera",
-              Math.PI / 2,
-              Math.PI / 2.3,
-              3,
-              BABYLON.Vector3.Zero(),
-              scene
-            );
-            camera.attachControl(canvas, true);
-            camera.lowerRadiusLimit = 2;
-            camera.upperRadiusLimit = 4;
-
-            const light = new BABYLON.HemisphericLight(
-              "light",
-              new BABYLON.Vector3(0, 1, 0),
-              scene
-            );
-            light.intensity = 1.2;
-
-            BABYLON.SceneLoader.ImportMesh(
-              "",
-              "https://models.babylonjs.com/",
-              "BoomBox.glb",
-              scene
-            );
-
-            return scene;
-          };
-
-          const scene = createScene();
-          engine.runRenderLoop(() => scene.render());
-          window.addEventListener("resize", () => engine.resize());
-        </script>
-      </body>
-    </html>
-  `;
+  if (!modelUri) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#000000" />
+        <Text style={{ marginTop: 10 }}>Loading Asset...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <WebView
-        style={styles.webview}
-        originWhitelist={["*"]}
-        source={{ html }}
-        javaScriptEnabled
-        domStorageEnabled
-        allowsInlineMediaPlayback
-        scrollEnabled={false}
-      />
+      <Canvas>
+        <ambientLight intensity={1.5} />
+        <pointLight position={[10, 10, 10]} />
+        <Suspense fallback={null}>
+          <Model uri={modelUri} />
+        </Suspense>
+      </Canvas>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,                     // 🔥 FULL SCREEN
+    flex: 1,
     backgroundColor: "transparent",
   },
-  webview: {
-    flex: 1,                     // 🔥 WebView krijgt echte hoogte
-    backgroundColor: "transparent",
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

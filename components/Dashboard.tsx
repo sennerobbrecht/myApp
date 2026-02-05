@@ -2,10 +2,10 @@ import { BlurView } from "expo-blur";
 import React, { useEffect } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import Animated, {
-    Easing,
-    useAnimatedStyle,
-    useSharedValue,
-    withTiming,
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -34,7 +34,7 @@ export default function Dashboard({ visible, children }: DashboardProps) {
         easing: Easing.in(Easing.quad),
       });
     }
-  }, [visible]);
+  }, [visible, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -45,7 +45,10 @@ export default function Dashboard({ visible, children }: DashboardProps) {
   return (
     // Wrapper creates a "Mask" starting at TOP_OFFSET
     // overflow: hidden ensures the sheet is invisible until it slides "into" this frame
-    <View style={[styles.maskContainer, { top: TOP_OFFSET }]}>
+    <View
+      style={[styles.maskContainer, { top: TOP_OFFSET }]}
+      pointerEvents={visible ? "auto" : "none"}
+    >
       <Animated.View style={[styles.sheet, animatedStyle]}>
         <BlurView intensity={80} tint="dark" style={styles.blurContainer}>
           <View
@@ -73,7 +76,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     // This allows the sheet to "emerge" from the top edge of this container
     overflow: "hidden",
-    zIndex: -1,
+    zIndex: 20,
   },
   sheet: {
     width: "100%",
