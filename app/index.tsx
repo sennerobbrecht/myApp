@@ -6,6 +6,7 @@ import Nav, { TabOption } from "../components/Nav";
 import OverlayButton from "../components/OverlayButton";
 import Routines from "../components/Routines";
 import Focus from "../components/Focus";
+import MoodTracker from "../components/MoodTracker";
 
 // XP required per level (temporary constant)
 const XP_PER_LEVEL = 100;
@@ -55,6 +56,7 @@ export default function Index() {
         <View style={styles.dashboardContent}>
           {activeTab === "Routines" && <Routines onGainXP={addXP} />}
           {activeTab === "Focus Mode" && <Focus />}
+          {activeTab === "Mood Tracker" && <MoodTracker />}
         </View>
       </Dashboard>
     </View>
