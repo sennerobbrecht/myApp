@@ -5,6 +5,36 @@ import { Suspense, useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import TaskoModel from "../assets/3d-models/Tasko.glb";
 
+// Silence specific Expo warnings
+// Silence specific Expo warnings
+const originalWarn = console.warn;
+const originalLog = console.log;
+
+const silencedLogs = [
+  "EXT_color_buffer_float",
+  "gl.pixelStorei",
+  "EXGL: gl.pixelStorei()",
+];
+
+console.warn = (...args) => {
+  if (
+    typeof args[0] === "string" &&
+    silencedLogs.some((log) => args[0].includes(log))
+  ) {
+    return;
+  }
+  originalWarn(...args);
+};
+
+console.log = (...args) => {
+  if (
+    typeof args[0] === "string" &&
+    silencedLogs.some((log) => args[0].includes(log))
+  ) {
+    return;
+  }
+  originalLog(...args);
+};
 // 1. The Model Component (Inside Canvas)
 function Model({ uri }: { uri: string }) {
   // useGLTF will auto-suspend while loading
@@ -50,8 +80,13 @@ export default function Monster3D() {
   return (
     <View style={styles.container}>
       <Canvas>
-        <ambientLight intensity={1.5} />
-        <pointLight position={[10, 10, 10]} />
+        {/* Neutral white light so colors render true */}
+        <ambientLight intensity={1} />
+        {/* Main light from the top-right */}
+        <directionalLight position={[5, 5, 5]} intensity={2} />
+        {/* Soft fill light from the other side */}
+        <directionalLight position={[-5, 5, 5]} intensity={1} />
+
         <Suspense fallback={null}>
           <Model uri={modelUri} />
         </Suspense>

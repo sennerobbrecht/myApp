@@ -5,12 +5,9 @@ import Monster3D from "../components/Monster3D";
 import Nav, { TabOption } from "../components/Nav";
 import OverlayButton from "../components/OverlayButton";
 import Routines from "../components/Routines";
-<<<<<<< HEAD
-=======
 import XPBar from "../components/XpBar";
 
 const XP_PER_LEVEL = 100;
->>>>>>> origin/xp-bar
 
 export default function Index() {
   const [isDashboardVisible, setDashboardVisible] = useState(false);
@@ -37,13 +34,7 @@ export default function Index() {
 
   return (
     <View style={styles.root}>
-<<<<<<< HEAD
-      {/* 🧌 3D MONSTER = BASISLAAG (HOMESCREEN) */}
-
-      {/* 🔘 DASHBOARD KNOP (OVERLAY) */}
-=======
       {/* 🔘 DASHBOARD KNOP */}
->>>>>>> origin/xp-bar
       <View style={styles.overlay}>
         <OverlayButton
           title="Dashboard"
@@ -52,36 +43,23 @@ export default function Index() {
         />
       </View>
 
-<<<<<<< HEAD
       <Monster3D />
 
       {/* 📊 DASHBOARD OVERLAY */}
-=======
-      {/* 📊 DASHBOARD */}
->>>>>>> origin/xp-bar
       <Dashboard visible={isDashboardVisible}>
         <Nav activeTab={activeTab} onTabSelect={setActiveTab} />
 
         <View style={styles.dashboardContent}>
-          {activeTab === "Routines" && (
-            <Routines onGainXP={addXP} />
-          )}
+          {activeTab === "Routines" && <Routines onGainXP={addXP} />}
         </View>
       </Dashboard>
-<<<<<<< HEAD
-=======
 
       {/* ⭐ XP BAR (alleen als dashboard dicht is) */}
       {!isDashboardVisible && (
         <View style={styles.xpOverlay}>
-          <XPBar
-            level={level}
-            currentXP={currentXP}
-            maxXP={XP_PER_LEVEL}
-          />
+          <XPBar level={level} currentXP={currentXP} maxXP={XP_PER_LEVEL} />
         </View>
       )}
->>>>>>> origin/xp-bar
     </View>
   );
 }
@@ -100,8 +78,6 @@ const styles = StyleSheet.create({
   dashboardContent: {
     flex: 1,
   },
-<<<<<<< HEAD
-=======
   xpOverlay: {
     position: "absolute",
     bottom: 650,
@@ -109,5 +85,4 @@ const styles = StyleSheet.create({
     right: 20,
     zIndex: 20,
   },
->>>>>>> origin/xp-bar
 });
