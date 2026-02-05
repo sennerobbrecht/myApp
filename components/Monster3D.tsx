@@ -1,12 +1,11 @@
-import { useGLTF } from "@react-three/drei/native";
+import { OrbitControls, useGLTF } from "@react-three/drei/native";
 import { Canvas } from "@react-three/fiber/native";
 import { Asset } from "expo-asset";
 import { Suspense, useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import TaskoModel from "../assets/3d-models/Tasko.glb";
 
-// Silence specific Expo warnings
-// Silence specific Expo warnings
+// ... (keep the existing console warning silence code) ...
 const originalWarn = console.warn;
 const originalLog = console.log;
 
@@ -35,6 +34,7 @@ console.log = (...args) => {
   }
   originalLog(...args);
 };
+
 // 1. The Model Component (Inside Canvas)
 function Model({ uri }: { uri: string }) {
   // useGLTF will auto-suspend while loading
@@ -90,6 +90,12 @@ export default function Monster3D() {
         <Suspense fallback={null}>
           <Model uri={modelUri} />
         </Suspense>
+
+        <OrbitControls
+          enablePan={false}
+          minPolarAngle={Math.PI / 2}
+          maxPolarAngle={Math.PI / 2}
+        />
       </Canvas>
     </View>
   );
