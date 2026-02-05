@@ -1,4 +1,8 @@
-import { OrbitControls, useGLTF } from "@react-three/drei/native";
+import {
+  ContactShadows,
+  OrbitControls,
+  useGLTF,
+} from "@react-three/drei/native";
 import { Canvas } from "@react-three/fiber/native";
 import { Asset } from "expo-asset";
 import { Suspense, useEffect, useState } from "react";
@@ -39,7 +43,7 @@ console.log = (...args) => {
 function Model({ uri }: { uri: string }) {
   // useGLTF will auto-suspend while loading
   const { scene } = useGLTF(uri);
-  return <primitive object={scene} scale={2} position={[0, -1, 0]} />;
+  return <primitive object={scene} scale={3.5} position={[0, -1.5, 0]} />;
 }
 
 export default function Monster3D() {
@@ -80,12 +84,25 @@ export default function Monster3D() {
   return (
     <View style={styles.container}>
       <Canvas>
-        {/* Neutral white light so colors render true */}
-        <ambientLight intensity={1} />
+        {/* Stronger general lighting */}
+        <ambientLight intensity={1.5} />
+
+        {/* Hemisphere light mimics sky/ground lighting */}
+        <hemisphereLight intensity={1} groundColor="#444" />
+
         {/* Main light from the top-right */}
         <directionalLight position={[5, 5, 5]} intensity={2} />
         {/* Soft fill light from the other side */}
         <directionalLight position={[-5, 5, 5]} intensity={1} />
+
+        {/* Soft shadow to ground the model */}
+        <ContactShadows
+          opacity={0.6}
+          scale={10}
+          blur={2.5}
+          far={4}
+          color="#000000"
+        />
 
         <Suspense fallback={null}>
           <Model uri={modelUri} />
@@ -95,6 +112,7 @@ export default function Monster3D() {
           enablePan={false}
           minPolarAngle={Math.PI / 2}
           maxPolarAngle={Math.PI / 2}
+          rotateSpeed={2.5}
         />
       </Canvas>
     </View>
