@@ -1,16 +1,13 @@
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Dashboard from "../components/Dashboard";
+import Focus from "../components/Focus";
 import Monster3D from "../components/Monster3D";
+import MoodTracker from "../components/MoodTracker";
 import Nav, { TabOption } from "../components/Nav";
 import OverlayButton from "../components/OverlayButton";
 import Routines from "../components/Routines";
-<<<<<<< HEAD
 import XPBar from "../components/XpBar";
-=======
-import Focus from "../components/Focus";
-import MoodTracker from "../components/MoodTracker";
->>>>>>> feature/focus-mode
 
 // XP required per level (temporary constant)
 const XP_PER_LEVEL = 100;
@@ -53,14 +50,9 @@ export default function Index() {
 
   return (
     <View style={styles.root}>
-<<<<<<< HEAD
-      {/* 🔘 DASHBOARD BUTTON + XP BAR */}
-=======
       {/* 🧌 3D MONSTER = BASISLAAG (HOMESCREEN) */}
-
-      {/* 🔘 DASHBOARD KNOP (OVERLAY) */}
->>>>>>> feature/focus-mode
       <View style={styles.overlay}>
+        {/* 🔘 DASHBOARD KNOP (OVERLAY) */}
         <OverlayButton
           title="Dashboard"
           onPress={() => setDashboardVisible(!isDashboardVisible)}
@@ -83,11 +75,8 @@ export default function Index() {
 
         <View style={styles.dashboardContent}>
           {activeTab === "Routines" && <Routines onGainXP={addXP} />}
-<<<<<<< HEAD
-=======
           {activeTab === "Focus Mode" && <Focus />}
           {activeTab === "Mood Tracker" && <MoodTracker />}
->>>>>>> feature/focus-mode
         </View>
       </Dashboard>
     </View>

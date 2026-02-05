@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import {
   ContactShadows,
   Environment,
@@ -81,16 +80,11 @@ function Model({ uri }: { uri: string }) {
 
   return <primitive object={scene} scale={3.5} position={[0, -1.5, 0]} />;
 }
-=======
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
->>>>>>> feature/focus-mode
 
 // Temporary placeholder for Monster3D to avoid 3D/GL errors while
 // the rest of the app is being developed. Replace with the real
 // 3D component when dependencies are ready.
 export default function Monster3D() {
-<<<<<<< HEAD
   const [modelUri, setModelUri] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -159,20 +153,16 @@ export default function Monster3D() {
       </Canvas>
     </View>
   );
-=======
-  // Render an empty placeholder with the same size so layout remains
-  // but avoid displaying the "disabled" text.
-  return <View style={styles.container} pointerEvents="none" />;
->>>>>>> feature/focus-mode
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: 300,
-    alignItems: "center",
-    justifyContent: "center",
+    flex: 1,
+    backgroundColor: "transparent",
   },
-  text: {
-    color: "#888",
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
