@@ -2,11 +2,11 @@ import { addDays, addWeeks, format, startOfWeek, subWeeks } from "date-fns";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import {
-  LayoutAnimation,
-  Platform,
-  StyleSheet,
-  UIManager,
-  View,
+    LayoutAnimation,
+    Platform,
+    StyleSheet,
+    UIManager,
+    View,
 } from "react-native";
 import { NestableScrollContainer } from "react-native-draggable-flatlist";
 
@@ -25,7 +25,6 @@ type RoutinesProps = {
   onGainXP: (xp: number) => void;
 };
 
-
 const INITIAL_SECTIONS: RoutineSectionData[] = [
   {
     id: "morning",
@@ -35,10 +34,38 @@ const INITIAL_SECTIONS: RoutineSectionData[] = [
     xpBonus: 10,
     collapsed: false,
     tasks: [
-      { id: "m1", title: "Brush Teeth", duration: "3 min", xp: 15, completed: false, icon: "sparkles" },
-      { id: "m2", title: "Shower", duration: "10 min", xp: 10, completed: false, icon: "water" },
-      { id: "m3", title: "Get Dressed", duration: "5 min", xp: 5, completed: false, icon: "shirt" },
-      { id: "m4", title: "Breakfast", duration: "30 min", xp: 30, completed: false, icon: "cafe" },
+      {
+        id: "m1",
+        title: "Brush Teeth",
+        duration: "3 min",
+        xp: 15,
+        completed: false,
+        icon: "sparkles",
+      },
+      {
+        id: "m2",
+        title: "Shower",
+        duration: "10 min",
+        xp: 10,
+        completed: false,
+        icon: "water",
+      },
+      {
+        id: "m3",
+        title: "Get Dressed",
+        duration: "5 min",
+        xp: 5,
+        completed: false,
+        icon: "shirt",
+      },
+      {
+        id: "m4",
+        title: "Breakfast",
+        duration: "30 min",
+        xp: 30,
+        completed: false,
+        icon: "cafe",
+      },
     ],
   },
   {
@@ -49,18 +76,32 @@ const INITIAL_SECTIONS: RoutineSectionData[] = [
     xpBonus: 15,
     collapsed: true,
     tasks: [
-      { id: "e1", title: "Homework", duration: "30 min", xp: 20, completed: false, icon: "book" },
-      { id: "e2", title: "Pack Bag", duration: "5 min", xp: 5, completed: false, icon: "briefcase" },
+      {
+        id: "e1",
+        title: "Homework",
+        duration: "30 min",
+        xp: 20,
+        completed: false,
+        icon: "book",
+      },
+      {
+        id: "e2",
+        title: "Pack Bag",
+        duration: "5 min",
+        xp: 5,
+        completed: false,
+        icon: "briefcase",
+      },
     ],
   },
 ];
 
 export default function Routines({ onGainXP }: RoutinesProps) {
   const [history, setHistory] = useState<Record<string, RoutineSectionData[]>>(
-    {}
+    {},
   );
   const [currentWeekStart, setCurrentWeekStart] = useState(
-    startOfWeek(new Date(), { weekStartsOn: 1 })
+    startOfWeek(new Date(), { weekStartsOn: 1 }),
   );
   const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -76,7 +117,7 @@ export default function Routines({ onGainXP }: RoutinesProps) {
   const currentSections = getSectionsForDate(selectedDate);
 
   const updateSections = (
-    updater: (prev: RoutineSectionData[]) => RoutineSectionData[]
+    updater: (prev: RoutineSectionData[]) => RoutineSectionData[],
   ) => {
     const key = getDateKey(selectedDate);
     setHistory((prev) => ({
@@ -86,7 +127,7 @@ export default function Routines({ onGainXP }: RoutinesProps) {
   };
 
   const weekDays = Array.from({ length: 7 }).map((_, i) =>
-    addDays(currentWeekStart, i)
+    addDays(currentWeekStart, i),
   );
 
   const toggleTask = (sectionId: string, taskId: string) => {
@@ -96,22 +137,34 @@ export default function Routines({ onGainXP }: RoutinesProps) {
       prev.map((section) => {
         if (section.id !== sectionId) return section;
 
+        // Calculate the new tasks state
+        const newTasks = section.tasks.map((t) =>
+          t.id === taskId ? { ...t, completed: !t.completed } : t,
+        );
+
+        // Check completion status BEFORE the update
+        const wasCompleted = section.tasks.every((t) => t.completed);
+        // Check completion status AFTER the update
+        const isCompleted = newTasks.every((t) => t.completed);
+
+        // Grant XP only if transitioning from incomplete -> complete
+        if (!wasCompleted && isCompleted) {
+          gainedXP = section.xpBonus; // Use the section's total bonus
+        }
+        // Deduct XP only if transitioning from complete -> incomplete
+        else if (wasCompleted && !isCompleted) {
+          gainedXP = -section.xpBonus;
+        }
+
         return {
           ...section,
-          tasks: section.tasks.map((t) => {
-            if (t.id !== taskId) return t;
-
-            if (!t.completed) {
-              gainedXP += t.xp;
-            }
-
-            return { ...t, completed: !t.completed };
-          }),
+          tasks: newTasks,
         };
-      })
+      }),
     );
 
-    if (gainedXP > 0) {
+    // Call onGainXP if there was any change (positive or negative)
+    if (gainedXP !== 0) {
       onGainXP(gainedXP);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
@@ -121,20 +174,20 @@ export default function Routines({ onGainXP }: RoutinesProps) {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     updateSections((prev) =>
       prev.map((s) =>
-        s.id === sectionId ? { ...s, collapsed: !s.collapsed } : s
-      )
+        s.id === sectionId ? { ...s, collapsed: !s.collapsed } : s,
+      ),
     );
   };
 
   const onDragEnd = (sectionId: string, data: Task[]) => {
     updateSections((prev) =>
-      prev.map((s) => (s.id === sectionId ? { ...s, tasks: data } : s))
+      prev.map((s) => (s.id === sectionId ? { ...s, tasks: data } : s)),
     );
   };
 
   const changeWeek = (direction: "prev" | "next") => {
     setCurrentWeekStart((prev) =>
-      direction === "next" ? addWeeks(prev, 1) : subWeeks(prev, 1)
+      direction === "next" ? addWeeks(prev, 1) : subWeeks(prev, 1),
     );
   };
 

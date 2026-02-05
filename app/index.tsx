@@ -17,30 +17,50 @@ export default function Index() {
   const [level, setLevel] = useState(1);
   const [currentXP, setCurrentXP] = useState(0);
 
-  // ➕ XP + LEVEL UP LOGICA
-  const addXP = (xp: number) => {
-    setCurrentXP((prevXP) => {
-      let totalXP = prevXP + xp;
-      let levelsGained = Math.floor(totalXP / XP_PER_LEVEL);
+  // ➕ XP + LEVEL UP / DOWN LOGIC
+  const addXP = (amount: number) => {
+    // We use current state values (level, currentXP) from the closure.
+    // Since this function is recreated on every render, they likely match the current UI.
+    let newLevel = level;
+    let newXP = currentXP + amount;
 
-      if (levelsGained > 0) {
-        setLevel((prev) => prev + levelsGained);
-        totalXP = totalXP % XP_PER_LEVEL;
+    // Handle Level Up
+    while (newXP >= XP_PER_LEVEL) {
+      newXP -= XP_PER_LEVEL;
+      newLevel++;
+    }
+
+    // Handle Level Down
+    while (newXP < 0) {
+      if (newLevel > 1) {
+        newXP += XP_PER_LEVEL;
+        newLevel--;
+      } else {
+        newXP = 0; // Cap at 0 for level 1
+        break;
       }
+    }
 
-      return totalXP;
-    });
+    setLevel(newLevel);
+    setCurrentXP(newXP);
   };
 
   return (
     <View style={styles.root}>
-      {/* 🔘 DASHBOARD KNOP */}
+      {/* 🔘 DASHBOARD BUTTON + XP BAR */}
       <View style={styles.overlay}>
         <OverlayButton
           title="Dashboard"
           onPress={() => setDashboardVisible(!isDashboardVisible)}
           isOpen={isDashboardVisible}
         />
+
+        {/* ⭐ XP BAR (Only visible if dashboard is closed) */}
+        {!isDashboardVisible && (
+          <View style={styles.xpContainer}>
+            <XPBar level={level} currentXP={currentXP} maxXP={XP_PER_LEVEL} />
+          </View>
+        )}
       </View>
 
       <Monster3D />
@@ -53,13 +73,6 @@ export default function Index() {
           {activeTab === "Routines" && <Routines onGainXP={addXP} />}
         </View>
       </Dashboard>
-
-      {/* ⭐ XP BAR (alleen als dashboard dicht is) */}
-      {!isDashboardVisible && (
-        <View style={styles.xpOverlay}>
-          <XPBar level={level} currentXP={currentXP} maxXP={XP_PER_LEVEL} />
-        </View>
-      )}
     </View>
   );
 }
@@ -71,18 +84,16 @@ const styles = StyleSheet.create({
   overlay: {
     position: "absolute",
     top: 0,
-    left: 0,
-    right: 0,
+    left: 20,
+    right: 20,
     zIndex: 10,
+    alignItems: "center", // Center the items
+  },
+  xpContainer: {
+    marginTop: 10,
+    width: "100%",
   },
   dashboardContent: {
     flex: 1,
-  },
-  xpOverlay: {
-    position: "absolute",
-    bottom: 650,
-    left: 20,
-    right: 20,
-    zIndex: 20,
   },
 });
