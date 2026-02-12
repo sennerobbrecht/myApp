@@ -11,15 +11,14 @@ import {
 
 type Mood = "happy" | "calm" | "okay" | "tired" | "stressed" | "upset";
 
-const MOODS: { id: Mood; label: string; color: string; emoji: string }[] =
-  [
-    { id: "happy", label: "Happy", color: "#FFD97D", emoji: "😊" },
-    { id: "calm", label: "Calm", color: "#B9E6A8", emoji: "😌" },
-    { id: "okay", label: "Okay", color: "#A8D8F0", emoji: "😐" },
-    { id: "tired", label: "Tired", color: "#D4B8E8", emoji: "😴" },
-    { id: "stressed", label: "Stressed", color: "#FFB88C", emoji: "😟" },
-    { id: "upset", label: "Upset", color: "#FF9B9B", emoji: "😠" },
-  ];
+const MOODS: { id: Mood; label: string; color: string; emoji: string }[] = [
+  { id: "happy", label: "Happy", color: "#FFD97D", emoji: "😊" },
+  { id: "calm", label: "Calm", color: "#B9E6A8", emoji: "😌" },
+  { id: "okay", label: "Okay", color: "#A8D8F0", emoji: "😐" },
+  { id: "tired", label: "Tired", color: "#D4B8E8", emoji: "😴" },
+  { id: "stressed", label: "Stressed", color: "#FFB88C", emoji: "😟" },
+  { id: "upset", label: "Upset", color: "#FF9B9B", emoji: "😠" },
+];
 
 const REASONS = [
   "School",
@@ -71,13 +70,10 @@ export default function MoodTracker() {
       <SafeAreaView style={styles.submittedContainer}>
         <View style={styles.submittedContent}>
           <Text style={styles.submittedTitle}>Thanks for sharing!</Text>
-<<<<<<< Updated upstream
-          <Text style={styles.submittedSubtitle}>We&apos;ve saved your mood.</Text>
-=======
+
           <Text style={styles.submittedSubtitle}>
             We&apos;ve saved your mood.
           </Text>
->>>>>>> Stashed changes
         </View>
       </SafeAreaView>
     );
@@ -90,13 +86,10 @@ export default function MoodTracker() {
         showsVerticalScrollIndicator={false}
       >
         <Text style={styles.title}>How do you feel right now?</Text>
-<<<<<<< Updated upstream
-        <Text style={styles.subtitle}>There&apos;s no right or wrong answer.</Text>
-=======
+
         <Text style={styles.subtitle}>
           There&apos;s no right or wrong answer.
         </Text>
->>>>>>> Stashed changes
 
         {/* Mood Grid */}
         <View style={styles.moodGrid}>
