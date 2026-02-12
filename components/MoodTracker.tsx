@@ -1,31 +1,40 @@
 import React, { useState } from "react";
 import {
-  View,
+  SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
   TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
 type Mood = "happy" | "calm" | "okay" | "tired" | "stressed" | "upset";
 
-const MOODS: Array<{ id: Mood; label: string; color: string; emoji: string }> = [
-  { id: "happy", label: "Happy", color: "#FFD97D", emoji: "😊" },
-  { id: "calm", label: "Calm", color: "#B9E6A8", emoji: "😌" },
-  { id: "okay", label: "Okay", color: "#A8D8F0", emoji: "😐" },
-  { id: "tired", label: "Tired", color: "#D4B8E8", emoji: "😴" },
-  { id: "stressed", label: "Stressed", color: "#FFB88C", emoji: "😟" },
-  { id: "upset", label: "Upset", color: "#FF9B9B", emoji: "😠" },
-];
+const MOODS: { id: Mood; label: string; color: string; emoji: string }[] =
+  [
+    { id: "happy", label: "Happy", color: "#FFD97D", emoji: "😊" },
+    { id: "calm", label: "Calm", color: "#B9E6A8", emoji: "😌" },
+    { id: "okay", label: "Okay", color: "#A8D8F0", emoji: "😐" },
+    { id: "tired", label: "Tired", color: "#D4B8E8", emoji: "😴" },
+    { id: "stressed", label: "Stressed", color: "#FFB88C", emoji: "😟" },
+    { id: "upset", label: "Upset", color: "#FF9B9B", emoji: "😠" },
+  ];
 
-const REASONS = ["School", "Friends", "Homework", "Family", "Tired", "Something else"];
+const REASONS = [
+  "School",
+  "Friends",
+  "Homework",
+  "Family",
+  "Tired",
+  "Something else",
+];
 
 export default function MoodTracker() {
   const [selectedMood, setSelectedMood] = useState<Mood | null>(null);
-  const [selectedReasons, setSelectedReasons] = useState<Set<string>>(new Set());
+  const [selectedReasons, setSelectedReasons] = useState<Set<string>>(
+    new Set(),
+  );
   const [customReason, setCustomReason] = useState<string>("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -43,7 +52,9 @@ export default function MoodTracker() {
     if (selectedMood) {
       setSubmitted(true);
       // Could log mood + reasons here
-      const reasons = Array.from(selectedReasons).map((r) => (r === "Something else" ? customReason || r : r));
+      const reasons = Array.from(selectedReasons).map((r) =>
+        r === "Something else" ? customReason || r : r,
+      );
       console.log("Mood saved:", selectedMood, reasons);
       // Reset after a short delay for UX
       setTimeout(() => {
@@ -60,7 +71,13 @@ export default function MoodTracker() {
       <SafeAreaView style={styles.submittedContainer}>
         <View style={styles.submittedContent}>
           <Text style={styles.submittedTitle}>Thanks for sharing!</Text>
+<<<<<<< Updated upstream
           <Text style={styles.submittedSubtitle}>We&apos;ve saved your mood.</Text>
+=======
+          <Text style={styles.submittedSubtitle}>
+            We&apos;ve saved your mood.
+          </Text>
+>>>>>>> Stashed changes
         </View>
       </SafeAreaView>
     );
@@ -68,9 +85,18 @@ export default function MoodTracker() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <Text style={styles.title}>How do you feel right now?</Text>
+<<<<<<< Updated upstream
         <Text style={styles.subtitle}>There&apos;s no right or wrong answer.</Text>
+=======
+        <Text style={styles.subtitle}>
+          There&apos;s no right or wrong answer.
+        </Text>
+>>>>>>> Stashed changes
 
         {/* Mood Grid */}
         <View style={styles.moodGrid}>
@@ -79,20 +105,34 @@ export default function MoodTracker() {
               key={mood.id}
               style={[
                 styles.moodCard,
-                selectedMood === mood.id ? styles.moodCardSelectedBlue : styles.moodCardGray,
+                selectedMood === mood.id
+                  ? styles.moodCardSelectedBlue
+                  : styles.moodCardGray,
               ]}
               onPress={() => setSelectedMood(mood.id)}
               activeOpacity={0.8}
             >
               <View style={styles.moodCardInner}>
-                <Text style={[
-                  styles.moodEmoji,
-                  selectedMood === mood.id ? styles.moodEmojiSelected : styles.moodEmojiGray,
-                ]}>{mood.emoji}</Text>
-                <Text style={[
-                  styles.moodLabel,
-                  selectedMood === mood.id ? styles.moodLabelSelected : styles.moodLabelGray,
-                ]}>{mood.label}</Text>
+                <Text
+                  style={[
+                    styles.moodEmoji,
+                    selectedMood === mood.id
+                      ? styles.moodEmojiSelected
+                      : styles.moodEmojiGray,
+                  ]}
+                >
+                  {mood.emoji}
+                </Text>
+                <Text
+                  style={[
+                    styles.moodLabel,
+                    selectedMood === mood.id
+                      ? styles.moodLabelSelected
+                      : styles.moodLabelGray,
+                  ]}
+                >
+                  {mood.label}
+                </Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -138,7 +178,11 @@ export default function MoodTracker() {
               </View>
             )}
 
-            <TouchableOpacity style={styles.saveButton} onPress={saveMood} activeOpacity={0.85}>
+            <TouchableOpacity
+              style={styles.saveButton}
+              onPress={saveMood}
+              activeOpacity={0.85}
+            >
               <Text style={styles.saveButtonText}>Save mood</Text>
             </TouchableOpacity>
             <Text style={styles.changeNote}>You can change this later.</Text>
@@ -265,8 +309,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   customReasonWrap: { marginHorizontal: 20, marginBottom: 12 },
-  customReasonInput: { backgroundColor: "#fff", borderRadius: 8, paddingHorizontal: 12, height: 44, color: "#243243" },
-  submittedContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
+  customReasonInput: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    height: 44,
+    color: "#243243",
+  },
+  submittedContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   submittedContent: { alignItems: "center" },
   submittedTitle: {
     fontSize: 24,
