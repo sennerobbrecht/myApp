@@ -60,7 +60,7 @@ export default function MoodTracker() {
       <SafeAreaView style={styles.submittedContainer}>
         <View style={styles.submittedContent}>
           <Text style={styles.submittedTitle}>Thanks for sharing!</Text>
-          <Text style={styles.submittedSubtitle}>We've saved your mood.</Text>
+          <Text style={styles.submittedSubtitle}>We&apos;ve saved your mood.</Text>
         </View>
       </SafeAreaView>
     );
@@ -70,7 +70,7 @@ export default function MoodTracker() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>How do you feel right now?</Text>
-        <Text style={styles.subtitle}>There's no right or wrong answer.</Text>
+        <Text style={styles.subtitle}>There&apos;s no right or wrong answer.</Text>
 
         {/* Mood Grid */}
         <View style={styles.moodGrid}>

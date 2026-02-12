@@ -8,38 +8,32 @@ import Nav, { TabOption } from "../components/Nav";
 import OverlayButton from "../components/OverlayButton";
 import Routines from "../components/Routines";
 import XPBar from "../components/XpBar";
+import Car from "../components/CustomizeCar";
 
-// XP required per level (temporary constant)
 const XP_PER_LEVEL = 100;
 
 export default function Index() {
   const [isDashboardVisible, setDashboardVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<TabOption>("Routines");
 
-  // ⭐ XP STATE
   const [level, setLevel] = useState(1);
   const [currentXP, setCurrentXP] = useState(0);
 
-  // ➕ XP + LEVEL UP / DOWN LOGIC
   const addXP = (amount: number) => {
-    // We use current state values (level, currentXP) from the closure.
-    // Since this function is recreated on every render, they likely match the current UI.
     let newLevel = level;
     let newXP = currentXP + amount;
 
-    // Handle Level Up
     while (newXP >= XP_PER_LEVEL) {
       newXP -= XP_PER_LEVEL;
       newLevel++;
     }
 
-    // Handle Level Down
     while (newXP < 0) {
       if (newLevel > 1) {
         newXP += XP_PER_LEVEL;
         newLevel--;
       } else {
-        newXP = 0; // Cap at 0 for level 1
+        newXP = 0;
         break;
       }
     }
@@ -50,29 +44,40 @@ export default function Index() {
 
   return (
     <View style={styles.root}>
-      {/* 🧌 3D MONSTER = BASISLAAG (HOMESCREEN) */}
-      <View style={styles.overlay}>
-        {/* 🔘 DASHBOARD KNOP (OVERLAY) */}
+      {/* 🧌 Monster */}
+      <Monster3D />
+
+      {/* ⭐ XP BAR */}
+      {!isDashboardVisible && (
+        <View style={styles.xpContainer}>
+          <XPBar
+            level={level}
+            currentXP={currentXP}
+            maxXP={XP_PER_LEVEL}
+          />
+        </View>
+      )}
+
+      {/* 🚗 CARROUSEL VOLLEDIG ONDERAAN */}
+      {!isDashboardVisible && (
+        <View style={styles.carouselContainer}>
+         <Car level={level} />
+
+        </View>
+      )}
+
+      {/* 🔘 Dashboard knop bovenaan */}
+      <View style={styles.topOverlay}>
         <OverlayButton
           title="Dashboard"
           onPress={() => setDashboardVisible(!isDashboardVisible)}
           isOpen={isDashboardVisible}
         />
-
-        {/* ⭐ XP BAR (Only visible if dashboard is closed) */}
-        {!isDashboardVisible && (
-          <View style={styles.xpContainer}>
-            <XPBar level={level} currentXP={currentXP} maxXP={XP_PER_LEVEL} />
-          </View>
-        )}
       </View>
 
-      <Monster3D />
-
-      {/* 📊 DASHBOARD OVERLAY */}
+      {/* 📊 Dashboard */}
       <Dashboard visible={isDashboardVisible}>
         <Nav activeTab={activeTab} onTabSelect={setActiveTab} />
-
         <View style={styles.dashboardContent}>
           {activeTab === "Routines" && <Routines onGainXP={addXP} />}
           {activeTab === "Focus Mode" && <Focus />}
@@ -87,18 +92,32 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  overlay: {
+
+  topOverlay: {
     position: "absolute",
     top: 0,
     left: 20,
     right: 20,
-    zIndex: 10,
-    alignItems: "center", // Center the items
+    zIndex: 20,
+    alignItems: "center",
   },
+
+
   xpContainer: {
-    marginTop: 10,
-    width: "100%",
+    position: "absolute",
+    bottom: 140,
+    left: 20,
+    right: 20,
   },
+
+  
+  carouselContainer: {
+    position: "absolute",
+    top: 120, 
+    left: 0,
+    right: 0,
+  },
+
   dashboardContent: {
     flex: 1,
   },
