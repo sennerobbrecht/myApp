@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import {
-  View,
-  FlatList,
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
+    Dimensions,
+    FlatList,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -14,22 +15,28 @@ type Item = {
   id: string;
   emoji: string;
   requiredLevel: number;
+  image?: any;
 };
 
 type Category = "Hats" | "Sunglasses" | "Jewelry" | "Monster Skin";
 
 type Props = {
   level: number;
+  onSelectHat: (id: string | null) => void;
 };
 
-export default function Carousel({ level }: Props) {
-  const [activeCategory, setActiveCategory] =
-    useState<Category>("Hats");
+export default function Carousel({ level, onSelectHat }: Props) {
+  const [activeCategory, setActiveCategory] = useState<Category>("Hats");
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
   const dataMap: Record<Category, Item[]> = {
     Hats: [
-      { id: "1", emoji: "🎩", requiredLevel: 1 }, // always unlocked
+      {
+        id: "1",
+        emoji: "🎩",
+        requiredLevel: 1,
+        // image removed to use emoji instead
+      }, // always unlocked
       { id: "2", emoji: "🧢", requiredLevel: 3 },
       { id: "3", emoji: "👑", requiredLevel: 6 },
       { id: "4", emoji: "🎓", requiredLevel: 9 },
@@ -80,14 +87,15 @@ export default function Carousel({ level }: Props) {
             ]}
             onPress={() => {
               setActiveCategory(cat);
+              // Optional: Deselect hat if switching away? Or keep it?
+              // keeping selectedItem null in local state for now for the new category
               setSelectedItem(null);
             }}
           >
             <Text
               style={[
                 styles.categoryText,
-                activeCategory === cat &&
-                  styles.activeCategoryText,
+                activeCategory === cat && styles.activeCategoryText,
               ]}
             >
               {cat}
@@ -110,7 +118,13 @@ export default function Carousel({ level }: Props) {
           return (
             <TouchableOpacity
               disabled={isLocked}
-              onPress={() => setSelectedItem(item.id)}
+              onPress={() => {
+                const newSelection = selectedItem === item.id ? null : item.id;
+                setSelectedItem(newSelection);
+                if (activeCategory === "Hats") {
+                  onSelectHat(newSelection);
+                }
+              }}
               style={[
                 styles.card,
                 isSelected && styles.selectedCard,
@@ -134,7 +148,20 @@ export default function Carousel({ level }: Props) {
                 </View>
               )}
 
-              <Text style={styles.emoji}>{item.emoji}</Text>
+              {item.image ? (
+                <Image
+                  source={item.image}
+                  style={{
+                    width: 80,
+                    height: 80,
+                    resizeMode: "contain",
+                    backgroundColor: "#f0f0f0",
+                    borderRadius: 8,
+                  }}
+                />
+              ) : (
+                <Text style={styles.emoji}>{item.emoji}</Text>
+              )}
             </TouchableOpacity>
           );
         }}
@@ -145,13 +172,13 @@ export default function Carousel({ level }: Props) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginTop: 12,
+    marginTop: 0,
   },
 
   categoryContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 16,
+    marginBottom: 8,
     paddingHorizontal: 16,
   },
 
@@ -177,7 +204,7 @@ const styles = StyleSheet.create({
 
   card: {
     width: width * 0.6,
-    height: 150,
+    height: 110,
     marginHorizontal: 8,
     borderRadius: 16,
     backgroundColor: "white",

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
+import Car from "../components/CustomizeCar";
 import Dashboard from "../components/Dashboard";
 import Focus from "../components/Focus";
 import Monster3D from "../components/Monster3D";
@@ -8,7 +9,6 @@ import Nav, { TabOption } from "../components/Nav";
 import OverlayButton from "../components/OverlayButton";
 import Routines from "../components/Routines";
 import XPBar from "../components/XpBar";
-import Car from "../components/CustomizeCar";
 
 const XP_PER_LEVEL = 100;
 
@@ -18,6 +18,7 @@ export default function Index() {
 
   const [level, setLevel] = useState(1);
   const [currentXP, setCurrentXP] = useState(0);
+  const [selectedHat, setSelectedHat] = useState<string | null>(null);
 
   const addXP = (amount: number) => {
     let newLevel = level;
@@ -45,24 +46,19 @@ export default function Index() {
   return (
     <View style={styles.root}>
       {/* 🧌 Monster */}
-      <Monster3D />
+      <Monster3D selectedHat={selectedHat} />
 
       {/* ⭐ XP BAR */}
       {!isDashboardVisible && (
         <View style={styles.xpContainer}>
-          <XPBar
-            level={level}
-            currentXP={currentXP}
-            maxXP={XP_PER_LEVEL}
-          />
+          <XPBar level={level} currentXP={currentXP} maxXP={XP_PER_LEVEL} />
         </View>
       )}
 
       {/* 🚗 CARROUSEL VOLLEDIG ONDERAAN */}
       {!isDashboardVisible && (
         <View style={styles.carouselContainer}>
-         <Car level={level} />
-
+          <Car level={level} onSelectHat={setSelectedHat} />
         </View>
       )}
 
@@ -102,7 +98,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-
   xpContainer: {
     position: "absolute",
     bottom: 140,
@@ -110,10 +105,9 @@ const styles = StyleSheet.create({
     right: 20,
   },
 
-  
   carouselContainer: {
     position: "absolute",
-    top: 120, 
+    top: 80,
     left: 0,
     right: 0,
   },

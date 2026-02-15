@@ -5,14 +5,33 @@ import {
 } from "@react-three/drei/native";
 import { Canvas } from "@react-three/fiber/native";
 import { Asset } from "expo-asset";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { LinearFilter, Texture } from "three";
 
 // Ensure we treat this as a module import
 const TEXTURE_ASSET = require("../assets/3d-models/Final_bake.png");
 const MODEL_ASSET = require("../assets/3d-models/Tasko.glb");
+const HAT_MODEL_ASSET = require("../assets/3d-models/hats/TopHat.glb");
 
-function MonsterModel({ uri }: { uri: string }) {
+function HatModel() {
+  const { scene } = useGLTF(Asset.fromModule(HAT_MODEL_ASSET).uri);
+
+  return (
+    <primitive
+      object={scene}
+      position={[-0.1, 0.35, 0.5]} // [X: Left/Right, Y: Up/Down, Z: Forward/Back]
+      scale={3.6}
+      rotation={[0.1, 0, 0]} // [X: Tilt Front/Back, Y: Rotate Left/Right, Z: Tilt Side]
+    />
+  );
+}
+function MonsterModel({
+  uri,
+  selectedHat,
+}: {
+  uri: string;
+  selectedHat: string | null;
+}) {
   // Extract animations from the GLTF
   const { scene, animations } = useGLTF(uri);
   // Get the animation actions
@@ -84,18 +103,34 @@ function MonsterModel({ uri }: { uri: string }) {
     }
   }, [scene, texture]);
 
-  return <primitive object={scene} scale={3.5} position={[0, -1.5, 0]} />;
+  return (
+    <group>
+      <primitive object={scene} scale={3.5} position={[0, -1.5, 0]} />
+      {selectedHat === "1" && (
+        <Suspense fallback={null}>
+          <HatModel />
+        </Suspense>
+      )}
+    </group>
+  );
 }
 
-export default function Monster3D() {
+export default function Monster3D({
+  selectedHat,
+}: {
+  selectedHat?: string | null;
+}) {
   // Resolve the model asset to a URI
   const uri = Asset.fromModule(MODEL_ASSET).uri;
 
   return (
-    <Canvas style={{ flex: 1 }}>
+    <Canvas
+      style={{ flex: 1 }}
+      gl={{ antialias: false }} // Disable MSAA to fix EXGL error
+    >
       <ambientLight intensity={1} />
       <directionalLight position={[5, 10, 5]} intensity={2} />
-      <MonsterModel uri={uri} />
+      <MonsterModel uri={uri} selectedHat={selectedHat ?? null} />
       <OrbitControls
         enableZoom={false}
         enablePan={false}
