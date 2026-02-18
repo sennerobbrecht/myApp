@@ -8,9 +8,13 @@ import { Asset } from "expo-asset";
 import { Suspense, useEffect, useState } from "react";
 import { LinearFilter, Texture } from "three";
 
-// Ensure we treat this as a module import
-const TEXTURE_ASSET = require("../assets/3d-models/Final_bake.png");
-const MODEL_ASSET = require("../assets/3d-models/Tasko.glb");
+// components/Monster3D.tsx
+
+// Fix: Use correct relative path '../' and include '/hats/' folder
+const TEXTURE_ASSET = require("../assets/3d-models/hats/bake_imgs/ToolTest.png");
+
+// These paths were already correct on the filesystem, but require correct relative path usage
+const MODEL_ASSET = require("../assets/3d-models/ToolTest.glb");
 const HAT_MODEL_ASSET = require("../assets/3d-models/hats/TopHat.glb");
 
 function HatModel() {
